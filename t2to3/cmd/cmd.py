@@ -7,7 +7,7 @@ from os.path import exists
 import click
 import json
 
-from ..walk import walk
+from ..walk import Walker
 from .. import __version__
 
 @click.group()
@@ -29,8 +29,21 @@ def config(ctx):
 @click.argument('dst', type=click.Path())
 def check(src, dst):
     """scan the src directory and output need-to-fix tips under the dst folder"""
+    walker = Walker()
+    walker.check(src, dst)
+    return
 
-    walk(src, dst)
+@click.command()
+@click.argument('src', type=click.Path(exists=True))
+def scan(src):
+    """scan the src directory and print"""
+    walker = Walker()
+    walker.scan(src)
+    return
 
 cmd.add_command(config)
 cmd.add_command(check)
+cmd.add_command(scan)
+
+def main():
+    return cmd()  # pylint: disable=no-value-for-parameter
