@@ -1,6 +1,6 @@
 """
-XFFPortal
-A client interface to the XFF Project
+t2to3
+A command-line interface to run the python 2to3 on a Python project.
 """
 import sys
 from setuptools import setup, find_packages

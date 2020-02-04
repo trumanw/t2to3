@@ -1,4 +1,4 @@
-# xffportal
+# t2to3
 
 A command-line interface to run the python 2to3 on a Python project. 
 

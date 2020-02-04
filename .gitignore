@@ -112,6 +112,3 @@ bin/
 examples/GetStarted/
 examples/inPut/
 examples/outPut/
-
-# ignore unittest output
-xffportal/tests/dataset/tmp/
