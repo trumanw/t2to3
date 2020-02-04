@@ -1,6 +1,6 @@
 # xffportal
 
-A python command-line interface to run 2to3 on a project directory.
+A command-line interface to run the python 2to3 on a Python project. 
 
 # Installation
 ## From Source Code
@@ -21,3 +21,8 @@ The output file types:
 t2to3.out: it contains all the runtime logs.
 t2to3.err: it contains all the errors.
 *.2to3: the results of the 2to3 mapped to the original source file by filename.
+
+# Features
+- Ignore folders listed in the input project's .gitignore file.
+- Tracing progress with tqdm
+- Versioneer
