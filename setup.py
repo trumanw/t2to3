@@ -30,11 +30,16 @@ setup(
     packages=find_packages(),
     include_package_data=True,
 
-    install_requires=[],
+    install_requires=[
+        'Click',
+        'tqdm',
+    ],
 
     tests_require=[
         'pytest',
-        'pytest-cov'
+        'pytest-cov',
+        'Click',
+        'tqdm',
     ],
 
     setup_requires=[] + pytest_runner,
