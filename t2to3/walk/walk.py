@@ -12,8 +12,9 @@ class Walker:
         self.errlog = 't2to3.err'
         self.outlog = 't2to3.out'
         self.basedir = ''
+        self.ignore_rules = []
 
-    def check(self, src, dst):
+    def check(self, src, dst, is_gitignore_enabled=True):
         """
         Walk through the src directory and generate 2to3 results to the associated files
         with same filename and folder organizations as the original source files in src.
@@ -21,7 +22,16 @@ class Walker:
         Args:
         - src: the source folder of the project needs to be checked.
         - dst: the output folder for keeping all the .2to3 result files.
+        - is_gitignore_enabled: If it is True, read the .gitignore file from the root directory of src and ignore all the files/folders listed in it.
         """
+        # load ignore file if is_gitignore_enabled
+        if is_gitignore_enabled:
+            if os.path.isfile(os.path.join(src, '.gitignore')):
+                ignore_file_lines = open(os.path.join(src, '.gitignore')).readlines()
+                for l in ignore_file_lines:
+                    if not l.strip().startswith('#') and l.strip() != '' and l.strip()[-1] == '/':
+                        self.ignore_rules.append(l.strip())
+
         # remove duplicated slash when dst replaced with the original file path
         if dst == './':
             dst = '.'
@@ -41,12 +51,15 @@ class Walker:
                     unprocess_fn = os.path.join(root, fn)
                     output_dir = root.replace(src, dst, 1)  # only need to replace the first one
                     processed_fn = os.path.join(output_dir, fn[:-2] + '2to3')   # .2to3 is the file ext.
+                    if not self._check_ignore(src, unprocess_fn):
+                        self.unprocessed_pairs.append({unprocess_fn:processed_fn})
 
-                    self.unprocessed_pairs.append({unprocess_fn:processed_fn})
-
-                    #TODO: change to logger.
-                    with open(self.outlog, 'a') as outfw:
-                        outfw.write("File added: {}.\n".format(unprocess_fn))
+                        #TODO: change to logger.
+                        with open(self.outlog, 'a') as outfw:
+                            outfw.write("File added: {}.\n".format(unprocess_fn))
+                    else:
+                        with open(self.outlog, 'a') as outfw:
+                            outfw.write("File ignored: {}.\n".format(unprocess_fn))
 
         from tqdm import trange
 
@@ -90,6 +103,23 @@ class Walker:
         with open(self.outlog, 'a') as outfw:
             os.remove(empty_file)
             outfw.write("Empty file deleted: {}.\n".format(empty_file))
+    
+    def _check_ignore(self, src, fn):
+        prefix_path = src
+        if src[-1] != '/':
+            prefix_path = src + '/'
+        if not os.path.isdir(prefix_path):
+            return False
+        
+        relative_fn_path = fn.replace(prefix_path, '', 1)
+        if len(self.ignore_rules) > 0:
+            ign_val = False
+            for ign_dir in self.ignore_rules:
+                if relative_fn_path.startswith(ign_dir):
+                    ign_val = True
+            return ign_val
+        else:
+            return False
 
     def scan(self, src):
         for root, dirs, fns in os.walk(src, topdown=True):
