@@ -26,7 +26,7 @@ setup(
     long_description_content_type="text/markdown",
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
-    license='Not Open Source',
+    license='MIT License',
     packages=find_packages(),
     include_package_data=True,
 
