@@ -97,7 +97,7 @@ class Walker:
                     self.passed_files.append(processed_fn)
 
                 if pstderr is not None:
-                    errfw.write(pstderr)
+                    errfw.write(str(pstderr))
     
     def _delete_empty_file(self, empty_file):
         with open(self.outlog, 'a') as outfw:
